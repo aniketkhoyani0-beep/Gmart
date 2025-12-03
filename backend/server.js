@@ -117,7 +117,7 @@ app.post('/api/create-paypal-order', async (req,res)=>{
   }catch(e){ console.error(e); res.status(500).json({error:e.message}); }
 });
 
-# Capture PayPal order
+// Capture PayPal order
 app.post('/api/capture-paypal-order', async (req,res)=>{
   try{
     const { orderID } = req.body;
@@ -156,7 +156,7 @@ app.post('/api/capture-paypal-order', async (req,res)=>{
   }catch(e){ console.error(e); res.status(500).json({error:e.message}); }
 });
 
-# Invoice download
+// Invoice download
 app.get('/api/invoice/:orderId', async (req,res)=>{
   const file = path.join(__dirname, 'public', 'invoices', `${req.params.orderId}.pdf`);
   if(fs.existsSync(file)) return res.sendFile(file);
