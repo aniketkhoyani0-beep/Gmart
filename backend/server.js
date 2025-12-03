@@ -21,13 +21,14 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // MongoDB
-const mongoUrl = process.env.MONGO_URI; // <-- reads from Render env variable
-mongoose.connect(mongoUrl, {
+const MONGO_URI = "mongodb+srv://aniketkhoyani0_db_user:Niket123@cluster0.wcsiuls.mongodb.net/Gmart?retryWrites=true&w=majority";
+
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+.then(() => console.log("MongoDB connected successfully"))
+.catch(err => console.error("MongoDB connection error:", err));
 
 // Schemas
 const userSchema = new mongoose.Schema({ name: String, email: {type:String, unique:true}, password: String, role:{type:String,default:'user'} });
