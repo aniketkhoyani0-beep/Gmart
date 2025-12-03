@@ -69,7 +69,7 @@ app.get('/api/products/:id', async (req,res)=>{ const p = await Product.findById
 app.post('/api/products', authMiddleware, async (req,res)=>{ try{ const user = req.user; if(user.role!=='admin') return res.status(403).json({error:'Forbidden'}); const {name,price,description} = req.body; const p = await Product.create({name,price,description}); res.json(p); }catch(e){ res.status(400).json({error:e.message}); } });
 app.delete('/api/products/:id', authMiddleware, async (req,res)=>{ try{ const user = req.user; if(user.role!=='admin') return res.status(403).json({error:'Forbidden'}); await Product.findByIdAndDelete(req.params.id); res.json({ok:true}); }catch(e){ res.status(400).json({error:e.message}); } });
 
-# Create PayPal order
+// Create PayPal order
 app.post('/api/create-paypal-order', async (req,res)=>{
   try{
     const { items, customer } = req.body;
