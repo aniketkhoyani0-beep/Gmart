@@ -90,7 +90,7 @@ app.post('/api/create-paypal-order', async (req,res)=>{
     const orderRes = await fetch(`${PAYPAL_BASE}/v2/checkout/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + access },
-      body: JSON.stringify({ intent: 'CAPTURE', purchase_units: [{ amount: { currency_code: 'USD', value: (total/100).toFixed(2), breakdown: { item_total: { currency_code: 'USD', value: (total/100).toFixed(2) } } , items: purchase_units_items } ] })
+      body: JSON.stringify({ intent: 'CAPTURE', purchase_units: [{ amount: { currency_code: 'USD', value: (total/100).toFixed(2), breakdown: { item_total: { currency_code: 'USD', value: (total/100).toFixed(2) } } , items: purchase_units_items }] })
     });
     const orderData = await orderRes.json();
     // Save order stub
