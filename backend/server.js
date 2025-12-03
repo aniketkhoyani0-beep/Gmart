@@ -21,7 +21,13 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI).then(()=>console.log('Mongo connected')).catch(err=>console.error(err));
+const mongoUrl = process.env.MONGO_URI; // <-- reads from Render env variable
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
 
 // Schemas
 const userSchema = new mongoose.Schema({ name: String, email: {type:String, unique:true}, password: String, role:{type:String,default:'user'} });
