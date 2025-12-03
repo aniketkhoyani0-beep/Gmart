@@ -163,7 +163,7 @@ app.get('/api/invoice/:orderId', async (req,res)=>{
   res.status(404).send('Invoice not found');
 });
 
-# Orders list for admin
+// Orders list for admin
 app.get('/api/orders', authMiddleware, async (req,res)=>{ const user = req.user; if(user.role!=='admin') return res.status(403).json({error:'Forbidden'}); const orders = await Order.find().sort({createdAt:-1}); res.json(orders); });
 
 const PORT = process.env.PORT || 4242;
