@@ -39,16 +39,20 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // CORS: allow listed origins (and allow tools like Postman which have no origin)
 
+
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      callback(null, true); // allow
+  origin: function (origin, callback) {
+    // allow requests with no origin (like curl, Postman)
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
     } else {
-      callback(new Error(`CORS: Origin ${origin} not allowed`)); // deny
+      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
     }
   },
-  credentials: true
+  credentials: true // allows cookies/authorization headers
 }));
+
 
 
 // ---------- MongoDB ----------
