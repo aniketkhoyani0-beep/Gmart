@@ -169,6 +169,9 @@ app.get('/api/invoice/:orderId', async (req,res)=>{
   if(fs.existsSync(file)) return res.sendFile(file);
   res.status(404).send('Invoice not found');
 });
+app.get("/api/test", (req, res) => {
+    res.json({ message: "Backend is working!" });
+});
 
 // Orders list for admin
 app.get('/api/orders', authMiddleware, async (req,res)=>{ const user = req.user; if(user.role!=='admin') return res.status(403).json({error:'Forbidden'}); const orders = await Order.find().sort({createdAt:-1}); res.json(orders); });
