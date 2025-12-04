@@ -38,11 +38,6 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // CORS: allow listed origins (and allow tools like Postman which have no origin)
-const ALLOWED_ORIGINS = [
-  'https://gmart-site.onrender.com',
-  'https://gmart-frontend.onrender.com',
-  'http://localhost:3000'
-];
 
 app.use(cors({
   origin: (origin, callback) => {
