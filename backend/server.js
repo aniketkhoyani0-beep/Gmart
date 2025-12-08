@@ -42,12 +42,25 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
   origin: function(origin, callback) {
+    // Log the origin for debugging
+    console.log('Request Origin:', origin);
+
+    // Allow requests with no origin (like Postman) or from your frontend
     if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`Blocked CORS request from: ${origin}`);
       callback(new Error(`CORS: Origin ${origin} not allowed`));
     }
   },
+  credentials: true,  // Allow cookies / credentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization']     // Allowed headers
+}));
+
+// Optional: Handle preflight requests (for POST/PUT with credentials)
+app.options('*', cors({
+  origin: ALLOWED_ORIGINS,
   credentials: true
 }));
 
