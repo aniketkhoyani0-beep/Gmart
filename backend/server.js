@@ -28,10 +28,10 @@ const PAYPAL_BASE = PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https:
 
 // Put the allowed origins you use (frontend URL(s))
 const ALLOWED_ORIGINS = [
-  "https://gmart-site.onrender.com",          // your deployed frontend
-  "https://gmart-frontend.onrender.com",      // (optional alternate)
-  "http://localhost:3000",                    // local dev (if needed)
+  'https://gmart-site.onrender.com',
+  'http://localhost:3000'
 ];
+
 
 // ---------- Middlewares ----------
 app.use(express.json());
