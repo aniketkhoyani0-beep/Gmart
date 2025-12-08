@@ -41,16 +41,14 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like curl, Postman)
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.includes(origin)) {
-      return callback(null, true);
+  origin: function(origin, callback) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      callback(null, true);
     } else {
-      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
+      callback(new Error(`CORS: Origin ${origin} not allowed`));
     }
   },
-  credentials: true // allows cookies/authorization headers
+  credentials: true
 }));
 
 
