@@ -11,23 +11,23 @@
             flex-direction: column;
             align-items: center;
             margin: 0;
-            background-color: #f5f5f5;
             padding: 20px;
+            background-color: #f5f5f5;
         }
 
-        h1, h2 {
+        h1 {
             color: #333;
         }
 
         button {
-            padding: 8px 15px;
-            font-size: 14px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
             border: none;
             background-color: #4CAF50;
             color: white;
             border-radius: 5px;
-            margin: 3px;
+            margin-top: 20px;
         }
 
         button:hover {
@@ -44,64 +44,89 @@
             margin-top: 30px;
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
             justify-content: center;
+            gap: 20px;
+            width: 100%;
         }
 
         .product-card {
-            background: white;
-            padding: 15px;
+            background-color: white;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 15px;
             width: 200px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .product-card h3 {
-            margin: 5px 0;
+            margin: 10px 0 5px;
         }
 
         .product-card p {
             margin: 5px 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        #cart-container {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 500px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .cart-item button {
-            padding: 3px 8px;
-            font-size: 12px;
-        }
-
-        #cart-total {
-            font-weight: bold;
-            margin-top: 10px;
         }
     </style>
-
-    <!-- PayPal SDK for Euro -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=EUR"></script>
 </head>
 <body>
     <h1>Gmart Frontend Test</h1>
+
+    <!-- Test API -->
     <button id="testBtn">Test API</button>
     <div id="result"></div>
 
+    <!-- Products -->
+    <h2>Products</h2>
     <div id="products-container"></div>
+
+    <script>
+        const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
+
+        // ---------- Test API ----------
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${backendUrl}/api/test`);
+                const data = await response.json();
+                document.getElementById('result').textContent = data.message;
+            } catch (err) {
+                console.error('API Error:', err);
+                document.getElementById('result').textContent = 'Error connecting to API';
+            }
+        });
+
+        // ---------- Fetch & Display Products ----------
+        async function fetchProducts() {
+            try {
+                const response = await fetch(`${backendUrl}/api/products`);
+                if (!response.ok) throw new Error('Failed to fetch products');
+
+                const products = await response.json();
+                const container = document.getElementById('products-container');
+                container.innerHTML = '';
+
+                if (products.length === 0) {
+                    container.textContent = 'No products available.';
+                    return;
+                }
+
+                products.forEach(p => {
+                    const prodDiv = document.createElement('div');
+                    prodDiv.className = 'product-card';
+                    prodDiv.innerHTML = `
+                        <h3>${p.name}</h3>
+                        <p>${p.description}</p>
+                        <p>Price: €${(p.price / 100).toFixed(2)}</p>
+                    `;
+                    container.appendChild(prodDiv);
+                });
+            } catch (err) {
+                console.error('Products Error:', err);
+                document.getElementById('products-container').textContent = 'Error loading products';
+            }
+        }
+
+        // Fetch products immediately on page load
+        fetchProducts();
+    </script>
+</body>
+</html>
