@@ -338,6 +338,30 @@ app.get('/api/orders', authMiddleware, async (req, res) => {
   res.json(orders);
 });
 
+// ---------- Quick test products route (temporary) ----------
+app.get('/api/add-test-products', async (req, res) => {
+  try {
+    const testProducts = [
+      { name: "Apple iPhone 15", description: "Latest Apple iPhone", price: 99900 },
+      { name: "Samsung Galaxy S24", description: "Flagship Samsung phone", price: 89900 },
+      { name: "Sony Headphones", description: "Noise cancelling", price: 15000 },
+      { name: "Dell XPS 13", description: "Laptop for developers", price: 120000 },
+      { name: "Logitech Mouse", description: "Wireless mouse", price: 2500 }
+    ];
+
+    // Insert products only if DB is empty
+    const existing = await Product.find();
+    if (existing.length > 0) return res.json({ message: "Products already exist" });
+
+    const created = await Product.insertMany(testProducts);
+    res.json({ message: "Test products added", products: created });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 // ---------- Start server ----------
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
