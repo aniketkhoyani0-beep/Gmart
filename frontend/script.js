@@ -1,19 +1,84 @@
 const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
 let userToken = localStorage.getItem('token') || null;
 
-// ---------- Test API ----------
-document.getElementById('testBtn').addEventListener('click', async () => {
-    try {
-        const response = await fetch(`${backendUrl}/api/test`);
-        const data = await response.json();
-        document.getElementById('result').textContent = data.message;
-    } catch (err) {
-        console.error(err);
-        document.getElementById('result').textContent = 'Error connecting to API';
+// ---------- AUTH ---------- //
+if (window.location.pathname.includes('index.html')) {
+    // Redirect to login if not logged in
+    if (!userToken) {
+        alert('You must login first!');
+        window.location.href = 'auth.html';
+    } else {
+        document.getElementById('welcome-msg').textContent = 'Logged in';
     }
-});
 
-// ---------- Fetch & display products ----------
+    // Logout button
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        alert('Logged out successfully!');
+        window.location.href = 'auth.html';
+    });
+}
+
+if (window.location.pathname.includes('auth.html')) {
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const res = await fetch(`${backendUrl}/api/auth/register`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, password, name: email.split('@')[0] })
+            });
+            const data = await res.json();
+            document.getElementById('auth-msg').textContent = data.error || 'Registered successfully! You can login now.';
+        } catch (err) {
+            console.error(err);
+            document.getElementById('auth-msg').textContent = 'Registration failed';
+        }
+    });
+
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const res = await fetch(`${backendUrl}/api/auth/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (data.token) {
+                userToken = data.token;
+                localStorage.setItem('token', userToken);
+                alert('Logged in successfully!');
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('auth-msg').textContent = data.error || 'Login failed';
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById('auth-msg').textContent = 'Login failed';
+        }
+    });
+}
+
+// ---------- TEST API ---------- //
+if (document.getElementById('testBtn')) {
+    document.getElementById('testBtn').addEventListener('click', async () => {
+        try {
+            const response = await fetch(`${backendUrl}/api/test`);
+            const data = await response.json();
+            document.getElementById('result').textContent = data.message;
+        } catch (err) {
+            console.error('API Error:', err);
+            document.getElementById('result').textContent = 'Error connecting to API';
+        }
+    });
+}
+
+// ---------- PRODUCTS ---------- //
 async function fetchProducts() {
     try {
         const response = await fetch(`${backendUrl}/api/products`);
@@ -21,7 +86,7 @@ async function fetchProducts() {
         const container = document.getElementById('products-container');
         container.innerHTML = '';
 
-        if (!products || products.length === 0) {
+        if (products.length === 0) {
             container.textContent = 'No products available.';
             return;
         }
@@ -38,14 +103,14 @@ async function fetchProducts() {
             container.appendChild(prodDiv);
         });
     } catch (err) {
-        console.error(err);
+        console.error('Products Error:', err);
         document.getElementById('products-container').textContent = 'Error loading products';
     }
 }
 
-fetchProducts();
+if (document.getElementById('products-container')) fetchProducts();
 
-// ---------- Cart functionality ----------
+// ---------- CART ---------- //
 function getCart() {
     return JSON.parse(localStorage.getItem('cart') || '[]');
 }
@@ -57,8 +122,11 @@ function saveCart(cart) {
 function addToCart(product) {
     const cart = getCart();
     const existing = cart.find(item => item._id === product._id);
-    if (existing) existing.qty += 1;
-    else cart.push({...product, qty: 1});
+    if (existing) {
+        existing.qty += 1;
+    } else {
+        cart.push({...product, qty: 1});
+    }
     saveCart(cart);
     displayCart();
 }
@@ -109,4 +177,4 @@ function displayCart() {
 }
 
 // Display cart on page load
-displayCart();
+if (document.getElementById('cart-container')) displayCart();
