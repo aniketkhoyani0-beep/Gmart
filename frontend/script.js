@@ -353,3 +353,76 @@ const App = (() => {
     addToCart: async (id, qty) => { await addToCart(id, qty); updateCartCountUI(); }
   };
 })();
+
+// ---------- Cart Management ----------
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+// Save cart to localStorage
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+// Add product to cart
+function addToCart(product) {
+    const existing = cart.find(p => p.id === product._id);
+    if (existing) {
+        existing.qty++;
+    } else {
+        cart.push({ id: product._id, name: product.name, price: product.price, qty: 1 });
+    }
+    saveCart();
+    renderCart();
+}
+
+// Remove product from cart
+function removeFromCart(productId) {
+    cart = cart.filter(p => p.id !== productId);
+    saveCart();
+    renderCart();
+}
+
+// Update quantity
+function updateQuantity(productId, qty) {
+    const item = cart.find(p => p.id === productId);
+    if (item) {
+        item.qty = qty;
+        if (item.qty <= 0) removeFromCart(productId);
+    }
+    saveCart();
+    renderCart();
+}
+
+// Render cart on cart.html
+function renderCart() {
+    const container = document.getElementById('cart-container');
+    container.innerHTML = '';
+    let total = 0;
+
+    if (cart.length === 0) {
+        container.textContent = 'Cart is empty.';
+        document.getElementById('cart-summary').textContent = '';
+        return;
+    }
+
+    cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <div>
+                <h4>${item.name}</h4>
+                <p>Price: €${(item.price / 100).toFixed(2)}</p>
+            </div>
+            <div class="quantity-controls">
+                <button onclick="updateQuantity('${item.id}', ${item.qty - 1})">-</button>
+                <span>${item.qty}</span>
+                <button onclick="updateQuantity('${item.id}', ${item.qty + 1})">+</button>
+                <button onclick="removeFromCart('${item.id}')">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
+        total += item.price * item.qty;
+    });
+
+    document.getElementById('cart-summary').innerHTML = `<p>Total: €${(total / 100).toFixed(2)}</p>`;
+}
+
