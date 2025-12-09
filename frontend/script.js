@@ -145,7 +145,8 @@ document.getElementById('checkoutBtn').addEventListener('click', async () => {
 
         const data = await res.json();
         console.log('Order created:', data);
-        alert('Order created! Check console for PayPal order ID.');
+        renderPayPalButtons(data.id);  // data.id is PayPal order ID
+
     } catch (err) {
         console.error('Order error:', err);
         alert('Failed to create order');
@@ -176,4 +177,5 @@ function renderPayPalButtons(orderID) {
         }
     }).render('#paypal-button-container');
 }
+
 
