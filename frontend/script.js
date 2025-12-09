@@ -117,3 +117,38 @@ function displayCart() {
     summary.textContent = `Total Items: ${totalQty}, Total Price: €${(total / 100).toFixed(2)}`;
 }
 
+// ---------- Checkout / Create Order ----------
+document.getElementById('checkoutBtn').addEventListener('click', async () => {
+    if (!userToken) {
+        alert('Please login first!');
+        return;
+    }
+
+    const items = getCart();
+    if (items.length === 0) {
+        alert('Cart is empty!');
+        return;
+    }
+
+    const customerEmail = prompt('Enter your email for the order:', '');
+    if (!customerEmail) return;
+
+    try {
+        const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/create-paypal-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify({ items, customer: { email: customerEmail } })
+        });
+
+        const data = await res.json();
+        console.log('Order created:', data);
+        alert('Order created! Check console for PayPal order ID.');
+    } catch (err) {
+        console.error('Order error:', err);
+        alert('Failed to create order');
+    }
+});
+
