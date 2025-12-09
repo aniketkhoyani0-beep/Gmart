@@ -14,26 +14,29 @@
     <div id="result"></div>
 
     <!-- Auth Section -->
-<h2>User Login / Register</h2>
-
-<div id="auth-container">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="registerBtn">Register</button>
-    <button id="loginBtn">Login</button>
-    <p id="auth-msg"></p>
-</div>
-
+    <h2>User Login / Register</h2>
+    <div id="auth-container">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button id="registerBtn">Register</button>
+        <button id="loginBtn">Login</button>
+        <p id="auth-msg"></p>
+    </div>
 
     <!-- Products -->
     <h2>Products</h2>
     <div id="products-container"></div>
 
+    <!-- Cart -->
+    <h2>Cart</h2>
+    <div id="cart-container"></div>
+    <div id="cart-summary"></div>
+
     <script src="script.js"></script>
     <script>
         const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
 
-        // Test API
+        // ---------- Test API ----------
         document.getElementById('testBtn').addEventListener('click', async () => {
             try {
                 const response = await fetch(`${backendUrl}/api/test`);
@@ -45,7 +48,76 @@
             }
         });
 
-        // Fetch & display products
+        // ---------- Cart functionality ----------
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart') || '[]');
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function addToCart(product) {
+            const cart = getCart();
+            const existing = cart.find(item => item._id === product._id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({...product, qty: 1});
+            }
+            saveCart(cart);
+            displayCart();
+        }
+
+        function updateQty(productId, delta) {
+            const cart = getCart();
+            const item = cart.find(i => i._id === productId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                const index = cart.indexOf(item);
+                cart.splice(index, 1);
+            }
+            saveCart(cart);
+            displayCart();
+        }
+
+        function displayCart() {
+            const cart = getCart();
+            const container = document.getElementById('cart-container');
+            const summary = document.getElementById('cart-summary');
+            container.innerHTML = '';
+            let total = 0;
+            let totalQty = 0;
+
+            if (!cart || cart.length === 0) {
+                container.textContent = 'Cart is empty.';
+                summary.textContent = '';
+                return;
+            }
+
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'product-card';
+                div.innerHTML = `
+                    <h3>${item.name}</h3>
+                    <p>€${(item.price / 100).toFixed(2)}</p>
+                    <p>Quantity: ${item.qty}</p>
+                    <button class="plus">+</button>
+                    <button class="minus">-</button>
+                `;
+                div.querySelector('.plus').addEventListener('click', () => updateQty(item._id, 1));
+                div.querySelector('.minus').addEventListener('click', () => updateQty(item._id, -1));
+                container.appendChild(div);
+
+                total += item.price * item.qty;
+                totalQty += item.qty;
+            });
+
+            summary.textContent = `Total Items: ${totalQty}, Total Price: €${(total / 100).toFixed(2)}`;
+        }
+
+        // ---------- Fetch & display products ----------
         async function fetchProducts() {
             try {
                 const response = await fetch(`${backendUrl}/api/products`);
@@ -65,8 +137,9 @@
                         <h3>${p.name}</h3>
                         <p>${p.description}</p>
                         <p>Price: €${(p.price / 100).toFixed(2)}</p>
-                        <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
+                        <button>Add to Cart</button>
                     `;
+                    prodDiv.querySelector('button').addEventListener('click', () => addToCart(p));
                     container.appendChild(prodDiv);
                 });
             } catch (err) {
@@ -75,8 +148,9 @@
             }
         }
 
+        // ---------- Init ----------
         fetchProducts();
+        displayCart();
     </script>
 </body>
 </html>
-
