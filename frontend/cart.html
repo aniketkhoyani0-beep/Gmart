@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmart Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .cart-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .quantity-controls button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        #total {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<div id="cart-container"></div>
+
+<div id="total">Total: €0.00</div>
+
+<button id="back-btn" onclick="window.location.href='index.html'">⬅ Back to Shop</button>
+
+<script>
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const container = document.getElementById("cart-container");
+        container.innerHTML = "";
+
+        let totalPrice = 0;
+
+        cart.forEach((item, index) => {
+            totalPrice += item.price * item.quantity;
+
+            const div = document.createElement("div");
+            div.className = "cart-item";
+
+            div.innerHTML = `
+                <div>
+                    <h3>${item.name}</h3>
+                    <p>Price: €${(item.price / 100).toFixed(2)}</p>
+                </div>
+
+                <div class="quantity-controls">
+                    <button onclick="changeQty(${index}, -1)">−</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="changeQty(${index}, 1)">+</button>
+                </div>
+
+                <button onclick="removeItem(${index})">🗑</button>
+            `;
+
+            container.appendChild(div);
+        });
+
+        document.getElementById("total").textContent =
+            `Total: €${(totalPrice / 100).toFixed(2)}`;
+    }
+
+    function changeQty(index, change) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        cart[index].quantity += change;
+
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        loadCart();
+    }
+
+    loadCart();
+</script>
+
+</body>
+</html>
