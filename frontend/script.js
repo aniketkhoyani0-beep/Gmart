@@ -1,45 +1,52 @@
-let userToken = null; // Store JWT token
+const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
+let userToken = null; // JWT token for logged-in users
 
-// ---------- Register ----------
+// ---------- Test API ----------
+document.getElementById('testBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`${backendUrl}/api/test`);
+        const data = await response.json();
+        document.getElementById('result').textContent = data.message;
+    } catch (err) {
+        console.error('API Error:', err);
+        document.getElementById('result').textContent = 'Error connecting to API';
+    }
+});
+
+// ---------- Auth ----------
 document.getElementById('registerBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/auth/register', {
+        const res = await fetch(`${backendUrl}/api/auth/register`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, name: email.split('@')[0] })
         });
-
         const data = await res.json();
-        if (data.error) {
-            document.getElementById('auth-msg').textContent = data.error;
-        } else {
-            document.getElementById('auth-msg').textContent = 'Registered successfully! You can login now.';
-        }
+        document.getElementById('auth-msg').textContent = data.error || 'Registered successfully! You can login now.';
     } catch (err) {
         console.error(err);
         document.getElementById('auth-msg').textContent = 'Registration failed';
     }
 });
 
-// ---------- Login ----------
 document.getElementById('loginBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/auth/login', {
+        const res = await fetch(`${backendUrl}/api/auth/login`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-
         const data = await res.json();
         if (data.token) {
             userToken = data.token;
-            document.getElementById('auth-msg').textContent = 'Logged in successfully!';
+            document.getElementById('auth-msg').textContent = `Logged in as ${email}`;
+            await displayCart(); // Load backend cart after login
         } else {
             document.getElementById('auth-msg').textContent = data.error || 'Login failed';
         }
@@ -49,31 +56,57 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     }
 });
 
-
-
-// ---------- Cart functionality ----------
-function getCart() {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
+// ---------- Cart functions ----------
+async function getCart() {
+    if (userToken) {
+        try {
+            const res = await fetch(`${backendUrl}/api/cart`, {
+                headers: { 'Authorization': `Bearer ${userToken}` }
+            });
+            const data = await res.json();
+            return data.items || [];
+        } catch (err) {
+            console.error('Fetch backend cart error:', err);
+            return [];
+        }
+    } else {
+        return JSON.parse(localStorage.getItem('cart') || '[]');
+    }
 }
 
-function saveCart(cart) {
-    localStorage.setItem('cart', JSON.stringify(cart));
+async function saveCart(cart) {
+    if (userToken) {
+        try {
+            await fetch(`${backendUrl}/api/cart`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${userToken}`
+                },
+                body: JSON.stringify({ items: cart })
+            });
+        } catch (err) {
+            console.error('Save backend cart error:', err);
+        }
+    } else {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
 }
 
-function addToCart(product) {
-    const cart = getCart();
+async function addToCart(product) {
+    const cart = await getCart();
     const existing = cart.find(item => item._id === product._id);
     if (existing) {
         existing.qty += 1;
     } else {
-        cart.push({...product, qty: 1});
+        cart.push({ ...product, qty: 1 });
     }
-    saveCart(cart);
-    alert(`${product.name} added to cart`);
+    await saveCart(cart);
+    displayCart();
 }
 
-function updateQty(productId, delta) {
-    const cart = getCart();
+async function updateQty(productId, delta) {
+    const cart = await getCart();
     const item = cart.find(i => i._id === productId);
     if (!item) return;
     item.qty += delta;
@@ -81,12 +114,12 @@ function updateQty(productId, delta) {
         const index = cart.indexOf(item);
         cart.splice(index, 1);
     }
-    saveCart(cart);
+    await saveCart(cart);
     displayCart();
 }
 
-function displayCart() {
-    const cart = getCart();
+async function displayCart() {
+    const cart = await getCart();
     const container = document.getElementById('cart-container');
     const summary = document.getElementById('cart-summary');
     container.innerHTML = '';
@@ -117,65 +150,37 @@ function displayCart() {
     summary.textContent = `Total Items: ${totalQty}, Total Price: €${(total / 100).toFixed(2)}`;
 }
 
-// ---------- Checkout / Create Order ----------
-document.getElementById('checkoutBtn').addEventListener('click', async () => {
-    if (!userToken) {
-        alert('Please login first!');
-        return;
-    }
-
-    const items = getCart();
-    if (items.length === 0) {
-        alert('Cart is empty!');
-        return;
-    }
-
-    const customerEmail = prompt('Enter your email for the order:', '');
-    if (!customerEmail) return;
-
+// ---------- Fetch & display products ----------
+async function fetchProducts() {
     try {
-        const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/create-paypal-order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken}`
-            },
-            body: JSON.stringify({ items, customer: { email: customerEmail } })
-        });
+        const response = await fetch(`${backendUrl}/api/products`);
+        const products = await response.json();
+        const container = document.getElementById('products-container');
+        container.innerHTML = '';
 
-        const data = await res.json();
-        console.log('Order created:', data);
-        renderPayPalButtons(data.id);  // data.id is PayPal order ID
-
-    } catch (err) {
-        console.error('Order error:', err);
-        alert('Failed to create order');
-    }
-});
-
-function renderPayPalButtons(orderID) {
-    paypal.Buttons({
-        createOrder: (data, actions) => {
-            return orderID; // Use the order ID from your backend
-        },
-        onApprove: async (data, actions) => {
-            try {
-                const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/capture-paypal-order', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ orderID: data.orderID })
-                });
-                const result = await res.json();
-                console.log('Payment captured:', result);
-                alert('Payment successful!');
-                localStorage.removeItem('cart');
-                displayCart();
-            } catch (err) {
-                console.error('Capture error:', err);
-                alert('Payment failed!');
-            }
+        if (products.length === 0) {
+            container.textContent = 'No products available.';
+            return;
         }
-    }).render('#paypal-button-container');
+
+        products.forEach(p => {
+            const prodDiv = document.createElement('div');
+            prodDiv.className = 'product-card';
+            prodDiv.innerHTML = `
+                <h3>${p.name}</h3>
+                <p>${p.description}</p>
+                <p>Price: €${(p.price / 100).toFixed(2)}</p>
+                <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
+            `;
+            container.appendChild(prodDiv);
+        });
+    } catch (err) {
+        console.error('Products Error:', err);
+        document.getElementById('products-container').textContent = 'Error loading products';
+    }
 }
 
-
+// Fetch products immediately
+fetchProducts();
+// Display cart initially
+displayCart();
