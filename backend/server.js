@@ -81,7 +81,13 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: { type: String, default: 'user' }
 });
-const productSchema = new mongoose.Schema({ name:String, description:String, price:Number }); // price in cents
+const productSchema = new mongoose.Schema({ 
+    name: String, 
+    description: String, 
+    price: Number, 
+    image: String   // URL to product image
+});
+
 const orderSchema = new mongoose.Schema({
   stripeSessionId:String,
   paypalOrderId:String,
