@@ -35,6 +35,7 @@
     <script src="script.js"></script>
     <script>
         const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
+        let userToken = null; // Store JWT token after login
 
         // ---------- Test API ----------
         document.getElementById('testBtn').addEventListener('click', async () => {
@@ -45,6 +46,55 @@
             } catch (err) {
                 console.error('API Error:', err);
                 document.getElementById('result').textContent = 'Error connecting to API';
+            }
+        });
+
+        // ---------- Register ----------
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (!email || !password) {
+                document.getElementById('auth-msg').textContent = 'Please enter email and password';
+                return;
+            }
+            try {
+                const res = await fetch(`${backendUrl}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password, name: email.split('@')[0] })
+                });
+                const data = await res.json();
+                document.getElementById('auth-msg').textContent = data.error || 'Registered successfully! You can login now.';
+            } catch (err) {
+                console.error(err);
+                document.getElementById('auth-msg').textContent = 'Registration failed';
+            }
+        });
+
+        // ---------- Login ----------
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (!email || !password) {
+                document.getElementById('auth-msg').textContent = 'Please enter email and password';
+                return;
+            }
+            try {
+                const res = await fetch(`${backendUrl}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.token) {
+                    userToken = data.token;
+                    document.getElementById('auth-msg').textContent = `Logged in as ${email}`;
+                } else {
+                    document.getElementById('auth-msg').textContent = data.error || 'Login failed';
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('auth-msg').textContent = 'Login failed';
             }
         });
 
