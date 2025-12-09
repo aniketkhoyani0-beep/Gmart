@@ -152,3 +152,28 @@ document.getElementById('checkoutBtn').addEventListener('click', async () => {
     }
 });
 
+function renderPayPalButtons(orderID) {
+    paypal.Buttons({
+        createOrder: (data, actions) => {
+            return orderID; // Use the order ID from your backend
+        },
+        onApprove: async (data, actions) => {
+            try {
+                const res = await fetch('https://gmart-backend-7kyz.onrender.com/api/capture-paypal-order', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ orderID: data.orderID })
+                });
+                const result = await res.json();
+                console.log('Payment captured:', result);
+                alert('Payment successful!');
+                localStorage.removeItem('cart');
+                displayCart();
+            } catch (err) {
+                console.error('Capture error:', err);
+                alert('Payment failed!');
+            }
+        }
+    }).render('#paypal-button-container');
+}
+
