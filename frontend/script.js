@@ -164,16 +164,18 @@ async function fetchProducts() {
         }
 
         products.forEach(p => {
-            const prodDiv = document.createElement('div');
-            prodDiv.className = 'product-card';
-            prodDiv.innerHTML = `
-                <h3>${p.name}</h3>
-                <p>${p.description}</p>
-                <p>Price: €${(p.price / 100).toFixed(2)}</p>
-                <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
-            `;
-            container.appendChild(prodDiv);
-        });
+    const prodDiv = document.createElement('div');
+    prodDiv.className = 'product-card';
+    prodDiv.innerHTML = `
+        <img src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.name}" class="product-img">
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <p>Price: €${(p.price / 100).toFixed(2)}</p>
+        <button onclick='addToCart(${JSON.stringify(p)})'>Add to Cart</button>
+    `;
+    container.appendChild(prodDiv);
+});
+
     } catch (err) {
         console.error('Products Error:', err);
         document.getElementById('products-container').textContent = 'Error loading products';
@@ -184,3 +186,4 @@ async function fetchProducts() {
 fetchProducts();
 // Display cart initially
 displayCart();
+
