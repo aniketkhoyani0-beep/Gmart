@@ -1,49 +1,58 @@
-const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
-let userToken = null;
+// auth.js (ES module)
+const BACK = 'https://gmart-backend-7kyz.onrender.com';
+const TOKEN_KEY = 'userToken';
 
-// ---------- Register ----------
-document.getElementById('registerBtn').addEventListener('click', async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+const $ = s => document.querySelector(s);
 
-    try {
-        const res = await fetch(`${backendUrl}/api/auth/register`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email, password, name: email.split('@')[0] })
-        });
+async function register(){
+  const email = $('#email').value.trim();
+  const password = $('#password').value;
+  $('#authMsg').textContent = 'Working...';
+  try{
+    const res = await fetch(`${BACK}/api/auth/register`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password, name: email.split('@')[0] })
+    });
+    const j = await res.json();
+    $('#authMsg').textContent = j.error ? j.error : 'Registered — please login';
+  }catch(e){
+    $('#authMsg').textContent = 'Registration failed';
+    console.error(e);
+  }
+}
 
-        const data = await res.json();
-        document.getElementById('auth-msg').textContent = data.error || 'Registered successfully! You can login now.';
-    } catch (err) {
-        console.error(err);
-        document.getElementById('auth-msg').textContent = 'Registration failed';
+async function login(){
+  const email = $('#email').value.trim();
+  const password = $('#password').value;
+  $('#authMsg').textContent = 'Logging in...';
+  try{
+    const res = await fetch(`${BACK}/api/auth/login`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password })
+    });
+    const j = await res.json();
+    if(j.token){
+      localStorage.setItem(TOKEN_KEY, j.token);
+      $('#authMsg').textContent = 'Login successful! Redirecting…';
+      setTimeout(()=> location.href='index.html', 700);
+    } else {
+      $('#authMsg').textContent = j.error || 'Login failed';
     }
-});
+  }catch(e){
+    $('#authMsg').textContent = 'Login error';
+    console.error(e);
+  }
+}
 
-// ---------- Login ----------
-document.getElementById('loginBtn').addEventListener('click', async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+document.addEventListener('DOMContentLoaded', ()=>{
+  if($('#registerBtn')) $('#registerBtn').addEventListener('click', register);
+  if($('#loginBtn')) $('#loginBtn').addEventListener('click', login);
 
-    try {
-        const res = await fetch(`${backendUrl}/api/auth/login`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await res.json();
-        if (data.token) {
-            userToken = data.token;
-            localStorage.setItem('token', userToken);
-            document.getElementById('auth-msg').textContent = 'Logged in successfully!';
-            window.location.href = 'index.html';
-        } else {
-            document.getElementById('auth-msg').textContent = data.error || 'Login failed';
-        }
-    } catch (err) {
-        console.error(err);
-        document.getElementById('auth-msg').textContent = 'Login failed';
-    }
+  // wire theme button
+  document.querySelectorAll('#themeToggle').forEach(b=>b.addEventListener('click', ()=>{
+    const cur = localStorage.getItem('gmart_theme')||'light';
+    document.documentElement.classList.toggle('dark', cur !== 'dark');
+    localStorage.setItem('gmart_theme', cur === 'dark' ? 'light' : 'dark');
+    location.reload();
+  }));
 });
