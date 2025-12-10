@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmart Cart</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gmart — Cart</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>Your Cart</h1>
-    <div id="cart-container"></div>
-    <div id="cart-summary"></div>
-    <div id="paypal-button-container"></div>
+  <header class="site-header small">
+    <div class="brand"><h1>G<span>Mart</span></h1></div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a href="index.html" class="link-btn">Home</a>
+      <a id="authLink" href="auth.html" class="link-btn">Login</a>
+      <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
+    </div>
+  </header>
 
-    <button id="checkoutBtn">Checkout</button>
+  <main class="container">
+    <h2>Your Cart</h2>
+    <div id="cartList" class="cart-list"></div>
 
+    <div class="cart-summary" id="cartSummary">
+      <div>Total items: <span id="totalQty">0</span></div>
+      <div>Total price: <strong id="totalPrice">€0.00</strong></div>
+      <div class="cart-actions">
+        <button id="clearCart" class="secondary">Clear Cart</button>
+        <button id="checkoutBtn" class="primary">Proceed to Checkout</button>
+      </div>
+    </div>
+  </main>
 
-    <script src="script.js"></script>
-    <script>
-        displayCart();
-    </script>
-    <script src="https://www.paypal.com/sdk/js?client-id=ARoMwu1ud5yvo2OpjOTpH64BOyMM4SnUfKsZFcTw7JYjT6b_ZkMulJWdokMoFa3hjUW2-cCdCaIT6p8w&currency=EUR"></script>
+  <footer class="site-footer">
+    <small>© Gmart</small>
+  </footer>
 
+  <script src="main.js" type="module"></script>
 </body>
 </html>
