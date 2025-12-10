@@ -1,13 +1,17 @@
-// main.js
 const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
 
-// --------- User authentication ----------
-let userToken = localStorage.getItem('userToken') || null;
+// ---------- Elements ----------
 const authLink = document.getElementById('authLink');
 const logoutBtn = document.getElementById('logoutBtn');
+const cartCountEl = document.getElementById('cartCount');
+const themeToggle = document.getElementById('themeToggle');
+const productsContainer = document.getElementById('products');
 
-// Update header based on login status
-function updateAuthUI() {
+// ---------- User State ----------
+let userToken = localStorage.getItem('userToken') || null;
+
+// ---------- Header Update ----------
+function updateHeader() {
     if (userToken) {
         authLink.style.display = 'none';
         logoutBtn.style.display = 'inline-block';
@@ -16,17 +20,23 @@ function updateAuthUI() {
         logoutBtn.style.display = 'none';
     }
 }
-updateAuthUI();
+updateHeader();
 
-// Logout functionality
+// ---------- Logout ----------
 logoutBtn.addEventListener('click', () => {
-    userToken = null;
     localStorage.removeItem('userToken');
-    updateAuthUI();
-    alert('Logged out successfully!');
+    userToken = null;
+    updateHeader();
+    alert('Logged out successfully');
 });
 
-// --------- Cart functionality ----------
+// ---------- Theme Toggle ----------
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+});
+
+// ---------- Cart Functions ----------
 function getCart() {
     return JSON.parse(localStorage.getItem('cart') || '[]');
 }
@@ -39,59 +49,28 @@ function saveCart(cart) {
 function addToCart(product) {
     const cart = getCart();
     const existing = cart.find(item => item._id === product._id);
-    if (existing) {
-        existing.qty += 1;
-    } else {
-        cart.push({...product, qty: 1});
-    }
+    if (existing) existing.qty += 1;
+    else cart.push({ ...product, qty: 1 });
     saveCart(cart);
     alert(`${product.name} added to cart`);
 }
 
 function updateCartCount() {
-    const count = getCart().reduce((sum, item) => sum + item.qty, 0);
-    document.getElementById('cartCount').textContent = count;
+    const cart = getCart();
+    const totalQty = cart.reduce((acc, item) => acc + item.qty, 0);
+    cartCountEl.textContent = totalQty;
 }
 updateCartCount();
 
-// --------- Theme toggle ----------
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
-    const body = document.body;
-    body.classList.toggle('dark-mode');
-    themeToggle.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
-});
-
-// Apply saved theme
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.body.classList.add('dark-mode');
-    themeToggle.textContent = '☀️';
-}
-
-// --------- Test API ----------
-const apiStatus = document.getElementById('apiStatus');
-async function testAPI() {
-    try {
-        const res = await fetch(`${backendUrl}/api/test`);
-        const data = await res.json();
-        apiStatus.textContent = data.message;
-    } catch (err) {
-        apiStatus.textContent = 'Error connecting to API';
-    }
-}
-testAPI();
-
-// --------- Fetch & display products ----------
-const productsContainer = document.getElementById('products');
-
+// ---------- Fetch & Display Products ----------
 async function fetchProducts() {
     try {
         const res = await fetch(`${backendUrl}/api/products`);
         const products = await res.json();
         productsContainer.innerHTML = '';
 
-        if (products.length === 0) {
-            productsContainer.textContent = 'No products available.';
+        if (!products.length) {
+            productsContainer.textContent = 'No products available';
             return;
         }
 
@@ -99,27 +78,28 @@ async function fetchProducts() {
             const card = document.createElement('div');
             card.className = 'product-card';
             card.innerHTML = `
-                <img src="${p.image || 'assets/default-product.png'}" alt="${p.name}" class="product-img" />
                 <h3>${p.name}</h3>
                 <p>${p.description}</p>
-                <p>Price: €${(p.price/100).toFixed(2)}</p>
-                <button class="add-cart-btn">Add to Cart</button>
+                <p>Price: €${(p.price / 100).toFixed(2)}</p>
             `;
-            productsContainer.appendChild(card);
-
-            // Click on card opens product.html
-            card.addEventListener('click', (e) => {
-                if (e.target.classList.contains('add-cart-btn')) {
-                    e.stopPropagation();
-                    addToCart(p);
-                } else {
-                    localStorage.setItem('selectedProduct', JSON.stringify(p));
-                    window.location.href = 'product.html';
-                }
+            // Open product.html with product ID on click
+            card.addEventListener('click', () => {
+                window.location.href = `product.html?id=${p._id}`;
             });
+
+            // Add to Cart button
+            const btn = document.createElement('button');
+            btn.textContent = 'Add to Cart';
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // prevent card click
+                addToCart(p);
+            });
+            card.appendChild(btn);
+
+            productsContainer.appendChild(card);
         });
     } catch (err) {
-        console.error('Products fetch error:', err);
+        console.error(err);
         productsContainer.textContent = 'Error loading products';
     }
 }
