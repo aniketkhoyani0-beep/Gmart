@@ -3,31 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmart Products</title>
+    <title>Gmart</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Gmart Products</h1>
 
-    <!-- User Info & Logout -->
-    <div id="user-info">
-        <span id="welcome-msg"></span>
-        <button id="logoutBtn">Logout</button>
-    </div>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <h1 class="logo">GMART</h1>
 
-    <!-- Test API -->
-    <button id="testBtn">Test API</button>
-    <div id="result"></div>
+        <div class="nav-links">
+            <a href="auth.html" id="loginLink">Login</a>
+            <button id="logoutBtn" style="display:none;">Logout</button>
+            <a href="cart.html">Cart</a>
+        </div>
+    </nav>
 
-    <!-- Products -->
     <h2>Products</h2>
     <div id="products-container"></div>
 
-    <!-- Cart -->
-    <h2>Shopping Cart</h2>
-    <div id="cart-container"></div>
-    <p id="cart-summary"></p>
-
     <script src="script.js"></script>
+
+    <script>
+        // Load products
+        fetchProducts();
+
+        // Show logout only if token exists
+        const token = localStorage.getItem("userToken");
+        if (token) {
+            document.getElementById("logoutBtn").style.display = "inline-block";
+            document.getElementById("loginLink").style.display = "none";
+        }
+    </script>
 </body>
 </html>
