@@ -1,25 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gmart Login</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gmart — Login / Register</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-    <h2>Login / Register</h2>
-
-    <div id="auth-container">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-
-        <button id="registerBtn">Register</button>
-        <button id="loginBtn">Login</button>
-
-        <p id="auth-msg"></p>
+  <header class="site-header small">
+    <div class="brand"><h1>G<span>Mart</span></h1></div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a href="index.html" class="link-btn">Home</a>
+      <a href="cart.html" class="cart-link">Cart</a>
     </div>
+  </header>
 
-    <script src="script.js"></script>
+  <main class="container center">
+    <div class="auth-card">
+      <h2>Sign in or Create account</h2>
+
+      <label>Email
+        <input id="email" type="email" placeholder="you@example.com" />
+      </label>
+
+      <label>Password
+        <input id="password" type="password" placeholder="Choose a strong password" />
+      </label>
+
+      <div class="auth-actions">
+        <button id="loginBtn" class="primary">Login</button>
+        <button id="registerBtn" class="secondary">Register</button>
+      </div>
+
+      <p id="authMsg" class="muted small"></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>© Gmart</small>
+  </footer>
+
+  <script src="auth.js" type="module"></script>
 </body>
 </html>
