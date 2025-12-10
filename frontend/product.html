@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gmart — Product Details</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header small">
+    <div class="brand"><h1>G<span>Mart</span></h1></div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a href="index.html" class="link-btn">Home</a>
+      <a id="authLink" href="auth.html" class="link-btn">Login</a>
+      <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
+      <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="productDetail" class="product-detail"></div>
+  </main>
+
+  <footer class="site-footer">
+    <small>© Gmart</small>
+  </footer>
+
+  <script src="main.js" type="module"></script>
+</body>
+</html>
