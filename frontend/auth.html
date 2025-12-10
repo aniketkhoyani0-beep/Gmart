@@ -1,132 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gmart — Login / Register</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background-color: #f5f5f5;
-    }
-    .auth-container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      box-sizing: border-box;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .auth-msg {
-      text-align: center;
-      color: red;
-      margin-top: 10px;
-    }
-    .toggle-section {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #555;
-    }
-    @media (max-width: 480px) {
-      .auth-container {
-        padding: 20px;
-      }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmart — Login/Register</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="auth-container">
-    <h2 id="formTitle">Login</h2>
-
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-
-    <button id="authBtn">Login</button>
-
-    <p class="auth-msg" id="authMsg"></p>
-
-    <div class="toggle-section" id="toggleAuth">
-      Don't have an account? Register
+  <header class="site-header small">
+    <div class="brand"><h1>G<span>Mart</span></h1></div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a href="index.html" class="link-btn">Home</a>
     </div>
-  </div>
+  </header>
 
-  <script type="module">
-    import { registerUser, loginUser } from './main.js';
+  <main class="container auth-container">
+    <h2>User Login / Register</h2>
 
-    let isLogin = true;
+    <form id="authForm">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <div class="auth-buttons">
+        <button type="button" id="registerBtn" class="primary">Register</button>
+        <button type="button" id="loginBtn" class="secondary">Login</button>
+      </div>
+      <p id="auth-msg" class="muted"></p>
+    </form>
+  </main>
 
-    const formTitle = document.getElementById('formTitle');
-    const authBtn = document.getElementById('authBtn');
-    const toggleAuth = document.getElementById('toggleAuth');
-    const authMsg = document.getElementById('authMsg');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+  <footer class="site-footer">
+    <small>© Gmart</small>
+  </footer>
 
-    function updateForm() {
-      formTitle.textContent = isLogin ? 'Login' : 'Register';
-      authBtn.textContent = isLogin ? 'Login' : 'Register';
-      toggleAuth.textContent = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-      authMsg.textContent = '';
-    }
-
-    toggleAuth.addEventListener('click', () => {
-      isLogin = !isLogin;
-      updateForm();
-    });
-
-    authBtn.addEventListener('click', async () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!email || !password) {
-        authMsg.textContent = 'Please enter email and password';
-        return;
-      }
-
-      if (isLogin) {
-        const res = await loginUser(email, password);
-        authMsg.textContent = res.message;
-      } else {
-        const res = await registerUser(email, password);
-        authMsg.textContent = res.message;
-      }
-    });
-
-    updateForm();
-  </script>
+  <script type="module" src="auth.js"></script>
 </body>
 </html>
