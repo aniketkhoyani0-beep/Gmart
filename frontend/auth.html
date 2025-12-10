@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Gmart — Login/Register</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gmart — Login/Register</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
+  <main class="auth-container">
     <h2>Login / Register</h2>
     <div class="auth-form">
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="password" placeholder="Password">
-      <button id="registerBtn">Register</button>
-      <button id="loginBtn">Login</button>
-      <p id="auth-msg"></p>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <div class="auth-buttons">
+        <button id="loginBtn" class="primary">Login</button>
+        <button id="registerBtn" class="secondary">Register</button>
+      </div>
+      <p id="auth-msg" class="muted"></p>
     </div>
+    <a href="index.html" class="link-btn">Back to Home</a>
   </main>
 
   <script src="main.js" type="module"></script>
