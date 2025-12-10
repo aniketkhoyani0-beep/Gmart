@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Gmart — Home</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
-    <div class="brand"><h1>G<span>Mart</span></h1></div>
+    <div class="brand">
+      <h1>G<span>Mart</span></h1>
+    </div>
+
     <div class="header-actions">
       <button id="themeToggle" class="ghost-btn">🌙</button>
       <a id="authLink" href="auth.html" class="link-btn">Login</a>
@@ -17,18 +21,19 @@
     </div>
   </header>
 
+  <!-- Main Content -->
   <main class="container">
     <section class="hero">
       <h2>Fresh deals · Global shipping · Secure checkout</h2>
       <p class="muted">Welcome to Gmart — your international marketplace.</p>
     </section>
 
+    <!-- Products Section -->
     <section>
       <div class="section-header">
         <h3>Products</h3>
         <div id="testResult" class="muted small">API test: <span id="apiStatus">—</span></div>
       </div>
-
       <div id="products" class="products-grid"></div>
     </section>
   </main>
@@ -37,6 +42,122 @@
     <small>© Gmart</small>
   </footer>
 
-  <script src="main.js" type="module"></script>
+  <script type="module">
+    const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
+
+    let userToken = localStorage.getItem('userToken') || null;
+
+    // ---------- Theme Toggle ----------
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    let darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) body.classList.add('dark');
+    themeToggle.textContent = darkMode ? '☀️' : '🌙';
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      darkMode = body.classList.contains('dark');
+      themeToggle.textContent = darkMode ? '☀️' : '🌙';
+      localStorage.setItem('darkMode', darkMode);
+    });
+
+    // ---------- Auth Links ----------
+    const authLink = document.getElementById('authLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    function updateAuthUI() {
+      if (userToken) {
+        authLink.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+      } else {
+        authLink.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+      }
+    }
+    updateAuthUI();
+    logoutBtn.addEventListener('click', () => {
+      userToken = null;
+      localStorage.removeItem('userToken');
+      updateAuthUI();
+    });
+
+    // ---------- API Test ----------
+    async function testAPI() {
+      const apiStatus = document.getElementById('apiStatus');
+      try {
+        const res = await fetch(`${backendUrl}/api/test`);
+        const data = await res.json();
+        apiStatus.textContent = data.message;
+      } catch (err) {
+        console.error(err);
+        apiStatus.textContent = 'Error connecting to API';
+      }
+    }
+    testAPI();
+
+    // ---------- Cart ----------
+    function getCart() {
+      return JSON.parse(localStorage.getItem('cart') || '[]');
+    }
+    function saveCart(cart) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+    }
+    function updateCartCount() {
+      const cartCount = document.getElementById('cartCount');
+      const cart = getCart();
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      cartCount.textContent = totalQty;
+    }
+    function addToCart(product) {
+      const cart = getCart();
+      const existing = cart.find(item => item._id === product._id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({...product, qty: 1});
+      }
+      saveCart(cart);
+      alert(`${product.name} added to cart`);
+    }
+    updateCartCount();
+
+    // ---------- Fetch Products ----------
+    async function fetchProducts() {
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+      try {
+        const res = await fetch(`${backendUrl}/api/products`);
+        const products = await res.json();
+        if (products.length === 0) {
+          container.textContent = 'No products available.';
+          return;
+        }
+        products.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'product-card';
+          div.innerHTML = `
+            <img src="${p.image || 'assets/default.png'}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${p.description}</p>
+            <p>Price: €${(p.price / 100).toFixed(2)}</p>
+            <button class="add-btn">Add to Cart</button>
+          `;
+          // Add click to add to cart
+          div.querySelector('.add-btn').addEventListener('click', () => addToCart(p));
+          // Click on card opens product page
+          div.addEventListener('click', e => {
+            if (!e.target.classList.contains('add-btn')) {
+              localStorage.setItem('currentProduct', JSON.stringify(p));
+              window.location.href = 'product.html';
+            }
+          });
+          container.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        container.textContent = 'Error loading products';
+      }
+    }
+    fetchProducts();
+  </script>
 </body>
 </html>
