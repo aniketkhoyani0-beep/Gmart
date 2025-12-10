@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gmart — Product Details</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gmart — Product</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="site-header small">
     <div class="brand"><h1>G<span>Mart</span></h1></div>
     <div class="header-actions">
-      <button id="themeToggle" class="ghost-btn">🌙</button>
       <a href="index.html" class="link-btn">Home</a>
       <a id="authLink" href="auth.html" class="link-btn">Login</a>
       <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
@@ -19,13 +18,66 @@
   </header>
 
   <main class="container">
-    <div id="productDetail" class="product-detail"></div>
+    <div id="productContainer" class="product-detail"></div>
   </main>
 
   <footer class="site-footer">
     <small>© Gmart</small>
   </footer>
 
-  <script src="main.js" type="module"></script>
+  <script type="module">
+    import { addToCart, updateCartCount, userToken, updateAuthUI } from './main.js';
+
+    updateAuthUI();
+    updateCartCount();
+
+    const productContainer = document.getElementById('productContainer');
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+
+    if (!product) {
+      productContainer.innerHTML = `
+        <p>Product not found.</p>
+        <a href="index.html" class="primary">Back to Shop</a>
+      `;
+    } else {
+      let qty = 1;
+
+      function renderProduct() {
+        productContainer.innerHTML = `
+          <img src="${product.image || 'assets/default-product.png'}" alt="${product.name}" class="product-img" />
+          <h2>${product.name}</h2>
+          <p>${product.description}</p>
+          <p>Price: €${(product.price/100).toFixed(2)}</p>
+          <div class="quantity-controls">
+            <button id="decreaseQty">-</button>
+            <span id="qty">${qty}</span>
+            <button id="increaseQty">+</button>
+          </div>
+          <button id="addCartBtn" class="primary">Add to Cart</button>
+          <a href="index.html" class="secondary">Back to Shop</a>
+        `;
+
+        document.getElementById('increaseQty').addEventListener('click', () => {
+          qty++;
+          document.getElementById('qty').textContent = qty;
+        });
+
+        document.getElementById('decreaseQty').addEventListener('click', () => {
+          if (qty > 1) {
+            qty--;
+            document.getElementById('qty').textContent = qty;
+          }
+        });
+
+        document.getElementById('addCartBtn').addEventListener('click', () => {
+          addToCart({...product, qty});
+          alert(`${product.name} added to cart (${qty})`);
+          updateCartCount();
+        });
+      }
+
+      renderProduct();
+    }
+  </script>
 </body>
 </html>
