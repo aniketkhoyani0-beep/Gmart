@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -7,159 +7,60 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header">
-    <div class="brand">
-        <h1>G<span>Mart</span></h1>
+    <div class="header-left">
+      <div class="brand"><a href="index.html">G<span>Mart</span></a></div>
+      <div class="search-box">
+        <input id="searchInput" placeholder="Search for products, categories..." />
+        <button id="searchBtn">Search</button>
+      </div>
     </div>
 
-    <div class="header-actions">
-        <button id="themeToggle" class="ghost-btn">🌙</button>
-        <a id="authLink" href="auth.html" class="link-btn">Login</a>
-        <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
-        <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
+    <div class="header-right">
+      <div id="location" class="location">Deliver to: Your Location</div>
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a id="authLink" href="auth.html" class="link-btn">Login</a>
+      <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
+      <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
     </div>
-</header>
+  </header>
 
-
-  <!-- Main Content -->
   <main class="container">
-    <section class="hero">
-      <h2>Fresh deals · Global shipping · Secure checkout</h2>
-      <p class="muted">Welcome to Gmart — your international marketplace.</p>
+    <!-- Banner carousel -->
+    <section class="banner-section">
+      <div id="bannerCarousel" class="carousel">
+        <!-- banners injected by main.js -->
+      </div>
+      <div class="carousel-dots" id="carouselDots"></div>
     </section>
 
-    <!-- Products Section -->
-    <section>
-      <div class="section-header">
-        <h3>Products</h3>
-        <div id="testResult" class="muted small">API test: <span id="apiStatus">—</span></div>
-      </div>
-      <div id="products" class="products-grid"></div>
+    <!-- Categories row -->
+    <section class="categories" id="categoriesRow">
+      <!-- categories injected by main.js -->
+    </section>
+
+    <!-- Dynamic sections container -->
+    <section id="homeSections" class="home-sections">
+      <!-- Sections (Winter Store, Discounts, Exclusive, etc.) injected by main.js -->
+    </section>
+
+    <!-- Fallback full product grid (if needed) -->
+    <section id="allProductsSection" class="all-products-section">
+      <div class="section-header"><h3>All Products</h3></div>
+      <div id="allProductsGrid" class="products-grid"></div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <small>© Gmart</small>
+    <div class="footer-inner">
+      <div>© Gmart</div>
+      <div class="app-buttons">
+        <a class="store-btn" href="#"><img alt="Play" src="assets/google-play.png"></a>
+        <a class="store-btn" href="#"><img alt="AppStore" src="assets/appstore.png"></a>
+      </div>
+    </div>
   </footer>
 
-  <script type="module">
-    const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
-
-    let userToken = localStorage.getItem('userToken') || null;
-
-    // ---------- Theme Toggle ----------
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    let darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) body.classList.add('dark');
-    themeToggle.textContent = darkMode ? '☀️' : '🌙';
-    themeToggle.addEventListener('click', () => {
-      body.classList.toggle('dark');
-      darkMode = body.classList.contains('dark');
-      themeToggle.textContent = darkMode ? '☀️' : '🌙';
-      localStorage.setItem('darkMode', darkMode);
-    });
-
-    // ---------- Auth Links ----------
-    const authLink = document.getElementById('authLink');
-    const logoutBtn = document.getElementById('logoutBtn');
-    function updateAuthUI() {
-      if (userToken) {
-        authLink.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-      } else {
-        authLink.style.display = 'inline-block';
-        logoutBtn.style.display = 'none';
-      }
-    }
-    updateAuthUI();
-    logoutBtn.addEventListener('click', () => {
-      userToken = null;
-      localStorage.removeItem('userToken');
-      updateAuthUI();
-    });
-
-    // ---------- API Test ----------
-    async function testAPI() {
-      const apiStatus = document.getElementById('apiStatus');
-      try {
-        const res = await fetch(`${backendUrl}/api/test`);
-        const data = await res.json();
-        apiStatus.textContent = data.message;
-      } catch (err) {
-        console.error(err);
-        apiStatus.textContent = 'Error connecting to API';
-      }
-    }
-    testAPI();
-
-    // ---------- Cart ----------
-    function getCart() {
-      return JSON.parse(localStorage.getItem('cart') || '[]');
-    }
-    function saveCart(cart) {
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateCartCount();
-    }
-    function updateCartCount() {
-      const cartCount = document.getElementById('cartCount');
-      const cart = getCart();
-      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-      cartCount.textContent = totalQty;
-    }
-    function addToCart(product) {
-      const cart = getCart();
-      const existing = cart.find(item => item._id === product._id);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({...product, qty: 1});
-      }
-      saveCart(cart);
-      alert(`${product.name} added to cart`);
-    }
-    updateCartCount();
-
-    // ---------- Fetch Products ----------
-    async function fetchProducts() {
-      const container = document.getElementById('products');
-      container.innerHTML = '';
-      try {
-        const res = await fetch(`${backendUrl}/api/products`);
-        const products = await res.json();
-        if (products.length === 0) {
-          container.textContent = 'No products available.';
-          return;
-        }
-        products.forEach(p => {
-          const div = document.createElement('div');
-          div.className = 'product-card';
-          div.innerHTML = `
-            <img src="${p.image || 'assets/default.png'}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <p>${p.description}</p>
-            <p>Price: €${(p.price / 100).toFixed(2)}</p>
-            <button class="add-btn">Add to Cart</button>
-          `;
-          // Add click to add to cart
-          div.querySelector('.add-btn').addEventListener('click', () => addToCart(p));
-          // Click on card opens product page
-          div.addEventListener('click', e => {
-            if (!e.target.classList.contains('add-btn')) {
-              localStorage.setItem('currentProduct', JSON.stringify(p));
-              window.location.href = 'product.html';
-            }
-          });
-          container.appendChild(div);
-        });
-      } catch (err) {
-        console.error(err);
-        container.textContent = 'Error loading products';
-      }
-    }
-    fetchProducts();
-  </script>
+  <script src="main.js"></script>
 </body>
 </html>
-
