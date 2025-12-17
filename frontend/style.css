@@ -482,4 +482,26 @@ body.dark-mode .search-suggestion.active {
   color: var(--muted);
 }
 
+/* Wishlist */
+.wishlist-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #fff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 6px;
+  color: #999;
+}
+
+.wishlist-btn.active {
+  color: red;
+}
+
+.product-card {
+  position: relative;
+}
+
 
