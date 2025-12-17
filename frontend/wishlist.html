@@ -1,41 +1,113 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>My Wishlist</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gmart — Wishlist</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header class="site-header small">
+    <div class="brand"><a href="index.html">G<span>Mart</span></a></div>
+    <div class="header-actions">
+      <button id="themeToggle" class="ghost-btn">🌙</button>
+      <a href="index.html" class="link-btn">Home</a>
+      <a id="authLink" href="auth.html" class="link-btn">Login</a>
+      <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
+      <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
+    </div>
+  </header>
 
-<header class="site-header">
-  <div class="brand">
-    <a href="index.html">G<span>Mart</span></a>
-  </div>
-</header>
+  <main class="container">
+    <h2>Your Wishlist</h2>
+    <div id="wishlistGrid" class="products-grid"></div>
+  </main>
 
-<main class="container">
-  <h2>❤️ My Wishlist</h2>
-  <div id="wishlistGrid" class="products-grid"></div>
-</main>
+  <footer class="site-footer">
+    <small>© Gmart</small>
+  </footer>
 
-<script>
-  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  const grid = document.getElementById("wishlistGrid");
+  <script src="main.js"></script>
+  <script>
+    const wishlistGrid = document.getElementById("wishlistGrid");
+    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
 
-  if (wishlist.length === 0) {
-    grid.innerHTML = "<p>No items in wishlist.</p>";
-  } else {
-    grid.innerHTML = wishlist.map(p => `
-      <div class="product-card">
-        <img src="${p.image}" />
-        <h4>${p.name}</h4>
-        <div class="price-row">
-          <span class="price">₹${p.price}</span>
-        </div>
-      </div>
-    `).join("");
-  }
-</script>
+    function imgFor(p) {
+      if (p.images && p.images.length) return p.images[0];
+      if (p.image) return p.image;
+      return "assets/default.png";
+    }
 
+    function getCart() {
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    }
+
+    function saveCart(c) {
+      localStorage.setItem("cart", JSON.stringify(c));
+      if (window.updateCartCount) window.updateCartCount();
+    }
+
+    function addToCart(p) {
+      const cart = getCart();
+      const f = cart.find(i => i._id === p._id);
+      if (f) f.qty++;
+      else cart.push({...p, qty: 1});
+      saveCart(cart);
+      alert(`${p.name} added to cart!`);
+    }
+
+    function renderWishlist() {
+      wishlistGrid.innerHTML = "";
+      if (!wishlist.length) {
+        wishlistGrid.innerHTML = `<p class="empty-text">Your wishlist is empty</p>`;
+        return;
+      }
+
+      wishlist.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+          <div class="product-image-wrap">
+            <img src="${imgFor(product)}" alt="${product.name}">
+            <button class="remove-wishlist">Remove</button>
+          </div>
+          <h4>${product.name}</h4>
+          <div class="price-row">
+            <span class="price">€${(product.price/100).toFixed(2)}</span>
+            ${
+              product.discount
+                ? `<span class="price-old">€${(product.price/(1 - product.discount/100)/100).toFixed(2)}</span>`
+                : ""
+            }
+          </div>
+          <button class="add-cart-btn">ADD TO CART</button>
+        `;
+
+        // Go to product page
+        card.addEventListener("click", () => {
+          window.location.href = `product.html?id=${product._id}`;
+        });
+
+        // Add to cart
+        card.querySelector(".add-cart-btn").addEventListener("click", e => {
+          e.stopPropagation();
+          addToCart(product);
+        });
+
+        // Remove from wishlist
+        card.querySelector(".remove-wishlist").addEventListener("click", e => {
+          e.stopPropagation();
+          const newWL = wishlist.filter(p => p._id !== product._id);
+          localStorage.setItem("wishlist", JSON.stringify(newWL));
+          renderWishlist();
+        });
+
+        wishlistGrid.appendChild(card);
+      });
+    }
+
+    renderWishlist();
+  </script>
 </body>
 </html>
