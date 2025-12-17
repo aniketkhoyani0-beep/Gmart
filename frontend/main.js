@@ -34,8 +34,11 @@ updateCartCount();
 
 // ================= HELPERS =================
 function imgFor(p) {
-  return p.images?.[0] || p.image || "assets/default.png";
+  if (p.images && p.images.length) return p.images[0];
+  if (p.image) return p.image;
+  return "assets/default.png";
 }
+
 function isTrending(p) {
   return p.popularity >= 80 || p.sales >= 100;
 }
