@@ -310,6 +310,21 @@ body {
   cursor: pointer;
 }
 
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ff9800;
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.product-card {
+  position: relative;
+}
+
 /* =========================================================
    FOOTER
    ========================================================= */
@@ -466,4 +481,5 @@ body.dark-mode .search-suggestion.active {
   font-size: 14px;
   color: var(--muted);
 }
+
 
