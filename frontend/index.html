@@ -62,5 +62,14 @@
   </footer>
 
   <script src="main.js"></script>
+  <script type="module">
+  import { toggleTheme } from "./theme.js";
+
+  document
+    .getElementById("themeBtn")
+    ?.addEventListener("click", toggleTheme);
+</script>
+
 </body>
 </html>
+
