@@ -42,37 +42,86 @@ function isTrending(p) {
 
 // ================= RENDER =================
 function renderProducts(list) {
-  allProductsGrid.innerHTML = "";
+  const grid = document.getElementById("allProductsGrid");
+  if (!grid) return;
 
-  if (!list.length) {
-    allProductsGrid.innerHTML = "<p>No products found</p>";
+  grid.innerHTML = "";
+
+  if (!list || list.length === 0) {
+    grid.innerHTML = `<p class="empty-text">No products found</p>`;
     return;
   }
 
-  list.forEach(p => {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+  list.forEach(product => {
+    const isWishlisted = wishlist.some(p => p._id === product._id);
+
     const card = document.createElement("div");
     card.className = "product-card";
 
     card.innerHTML = `
-      ${isTrending(p) ? `<span class="badge">Trending</span>` : ""}
-      <img src="${imgFor(p)}">
-      <h4>${p.name}</h4>
-      <div class="price">€${(p.price / 100).toFixed(2)}</div>
+      <div class="product-image-wrap">
+        <img src="${imgFor(product)}" alt="${product.name}">
+        <button class="wishlist-btn ${isWishlisted ? "active" : ""}">
+          ${isWishlisted ? "❤️" : "🤍"}
+        </button>
+      </div>
+
+      <h4 class="product-title">${product.name}</h4>
+
+      <div class="price-row">
+        <span class="price">€${(product.price / 100).toFixed(2)}</span>
+        ${
+          product.discount
+            ? `<span class="price-old">€${(
+                product.price /
+                (1 - product.discount / 100) /
+                100
+              ).toFixed(2)}</span>`
+            : ""
+        }
+      </div>
+
       <button class="add-cart-btn">ADD TO CART</button>
     `;
 
-    card.querySelector("button").onclick = e => {
+    /* ---------- PRODUCT PAGE ---------- */
+    card.addEventListener("click", () => {
+      window.location.href = `product.html?id=${product._id}`;
+    });
+
+    /* ---------- ADD TO CART ---------- */
+    card.querySelector(".add-cart-btn").addEventListener("click", e => {
       e.stopPropagation();
-      addToCart(p);
-    };
+      addToCart(product, 1);
+    });
 
-    card.onclick = () => {
-      window.location.href = `product.html?id=${p._id}`;
-    };
+    /* ---------- WISHLIST ---------- */
+    const wishlistBtn = card.querySelector(".wishlist-btn");
+    wishlistBtn.addEventListener("click", e => {
+      e.stopPropagation();
 
-    allProductsGrid.appendChild(card);
+      let wl = JSON.parse(localStorage.getItem("wishlist") || "[]");
+      const exists = wl.find(p => p._id === product._id);
+
+      if (exists) {
+        wl = wl.filter(p => p._id !== product._id);
+        wishlistBtn.innerHTML = "🤍";
+        wishlistBtn.classList.remove("active");
+      } else {
+        wl.push(product);
+        wishlistBtn.innerHTML = "❤️";
+        wishlistBtn.classList.add("active");
+      }
+
+      localStorage.setItem("wishlist", JSON.stringify(wl));
+    });
+
+    grid.appendChild(card);
   });
 }
+
 
 // ================= FILTER LOGIC =================
 function applyFilters(products) {
