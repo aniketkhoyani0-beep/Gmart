@@ -264,3 +264,90 @@ if (searchInput) {
     }
   });
 }
+
+/* ================= SEARCH WITH SUGGESTIONS ================= */
+
+const searchInput = document.getElementById("searchInput");
+const suggestionsBox = document.getElementById("searchSuggestions");
+
+let selectedIndex = -1;
+
+// IMPORTANT: this must match your products array
+// Example: products = [{ title, category, price, image }]
+function getAllProducts() {
+  return window.products || [];
+}
+
+function showSuggestions(value) {
+  const query = value.toLowerCase().trim();
+  suggestionsBox.innerHTML = "";
+  selectedIndex = -1;
+
+  if (!query) {
+    suggestionsBox.classList.remove("active");
+    return;
+  }
+
+  const results = getAllProducts().filter(p =>
+    p.title.toLowerCase().includes(query) ||
+    p.category?.toLowerCase().includes(query)
+  );
+
+  if (results.length === 0) {
+    suggestionsBox.innerHTML =
+      `<div class="search-no-results">No products found</div>`;
+    suggestionsBox.classList.add("active");
+    return;
+  }
+
+  results.slice(0, 8).forEach((product, index) => {
+    const div = document.createElement("div");
+    div.className = "search-suggestion";
+    div.innerHTML = `
+      <strong>${product.title}</strong>
+      <span>${product.category || "Product"}</span>
+    `;
+
+    div.addEventListener("click", () => {
+      searchInput.value = product.title;
+      suggestionsBox.classList.remove("active");
+      filterProducts(product.title);
+    });
+
+    suggestionsBox.appendChild(div);
+  });
+
+  suggestionsBox.classList.add("active");
+}
+
+searchInput.addEventListener("input", e => {
+  showSuggestions(e.target.value);
+});
+
+/* Keyboard navigation */
+searchInput.addEventListener("keydown", e => {
+  const items = suggestionsBox.querySelectorAll(".search-suggestion");
+  if (!items.length) return;
+
+  if (e.key === "ArrowDown") {
+    selectedIndex = (selectedIndex + 1) % items.length;
+  } else if (e.key === "ArrowUp") {
+    selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    if (items[selectedIndex]) items[selectedIndex].click();
+    return;
+  } else {
+    return;
+  }
+
+  items.forEach(i => i.classList.remove("active"));
+  items[selectedIndex].classList.add("active");
+});
+
+/* Close suggestions on outside click */
+document.addEventListener("click", e => {
+  if (!e.target.closest(".search-box")) {
+    suggestionsBox.classList.remove("active");
+  }
+});
