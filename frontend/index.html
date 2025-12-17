@@ -9,23 +9,22 @@
 <body>
   <header class="site-header">
     <div class="header-left">
-      <div class="brand"><a href="index.html">G<span>Mart</span></a></div>
+      <div class="brand">
+        <a href="index.html">G<span>Mart</span></a>
+      </div>
+
+      <!-- SINGLE SEARCH BOX -->
       <div class="search-box">
-        <input id="searchInput" placeholder="Search for products, categories..." />
-        <div class="search-box">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="Search products..."
-    autocomplete="off"
-  />
-  <button>Search</button>
-
-  <!-- Suggestions -->
-  <div id="searchSuggestions" class="search-suggestions"></div>
-</div>
-
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for products..."
+          autocomplete="off"
+        />
         <button id="searchBtn">Search</button>
+
+        <!-- Suggestions -->
+        <div id="searchSuggestions" class="search-suggestions"></div>
       </div>
     </div>
 
@@ -34,32 +33,30 @@
       <button id="themeToggle" class="ghost-btn">🌙</button>
       <a id="authLink" href="auth.html" class="link-btn">Login</a>
       <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
-      <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
+      <a href="cart.html" class="cart-link">
+        Cart (<span id="cartCount">0</span>)
+      </a>
     </div>
   </header>
 
   <main class="container">
     <!-- Banner carousel -->
     <section class="banner-section">
-      <div id="bannerCarousel" class="carousel">
-        <!-- banners injected by main.js -->
-      </div>
+      <div id="bannerCarousel" class="carousel"></div>
       <div class="carousel-dots" id="carouselDots"></div>
     </section>
 
-    <!-- Categories row -->
-    <section class="categories" id="categoriesRow">
-      <!-- categories injected by main.js -->
-    </section>
+    <!-- Categories -->
+    <section class="categories" id="categoriesRow"></section>
 
-    <!-- Dynamic sections container -->
-    <section id="homeSections" class="home-sections">
-      <!-- Sections (Winter Store, Discounts, Exclusive, etc.) injected by main.js -->
-    </section>
+    <!-- Home sections -->
+    <section id="homeSections" class="home-sections"></section>
 
-    <!-- Fallback full product grid (if needed) -->
+    <!-- All products -->
     <section id="allProductsSection" class="all-products-section">
-      <div class="section-header"><h3>All Products</h3></div>
+      <div class="section-header">
+        <h3>All Products</h3>
+      </div>
       <div id="allProductsGrid" class="products-grid"></div>
     </section>
   </main>
@@ -68,22 +65,16 @@
     <div class="footer-inner">
       <div>© Gmart</div>
       <div class="app-buttons">
-        <a class="store-btn" href="#"><img alt="Play" src="assets/google-play.png"></a>
-        <a class="store-btn" href="#"><img alt="AppStore" src="assets/appstore.png"></a>
+        <a class="store-btn" href="#">
+          <img alt="Play" src="assets/google-play.png">
+        </a>
+        <a class="store-btn" href="#">
+          <img alt="AppStore" src="assets/appstore.png">
+        </a>
       </div>
     </div>
   </footer>
 
   <script src="main.js"></script>
-  <script type="module">
-  import { toggleTheme } from "./theme.js";
-
-  document
-    .getElementById("themeBtn")
-    ?.addEventListener("click", toggleTheme);
-</script>
-
 </body>
 </html>
-
-
