@@ -405,3 +405,65 @@ body {
 .search-suggestion-item span {
   font-size: 14px;
 }
+
+/* ================= SEARCH SUGGESTIONS ================= */
+
+.search-box {
+  position: relative;
+}
+
+.search-suggestions {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border, #ddd);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  max-height: 280px;
+  overflow-y: auto;
+  display: none;
+  animation: fadeSlide 0.18s ease;
+  z-index: 999;
+}
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-suggestions.active {
+  display: block;
+}
+
+.search-suggestion {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-suggestion:hover,
+.search-suggestion.active {
+  background: rgba(0,0,0,0.05);
+}
+
+body.dark-mode .search-suggestion:hover,
+body.dark-mode .search-suggestion.active {
+  background: rgba(255,255,255,0.08);
+}
+
+.search-suggestion span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.search-no-results {
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
