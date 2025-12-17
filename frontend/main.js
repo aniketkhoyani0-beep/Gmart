@@ -144,3 +144,21 @@ async function loadProducts() {
   renderProducts(ALL_PRODUCTS.slice(0, 24));
 }
 loadProducts();
+
+function toggleWishlist(productId) {
+  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  const product = allProducts.find(p => p._id === productId);
+
+  if (!product) return;
+
+  const exists = wishlist.find(p => p._id === productId);
+
+  if (exists) {
+    wishlist = wishlist.filter(p => p._id !== productId);
+  } else {
+    wishlist.push(product);
+  }
+
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  renderHome(); // re-render products
+}
