@@ -215,3 +215,52 @@ function getCart(){ return JSON.parse(localStorage.getItem('cart') || '[]'); }
 window.addToCart = addToCart;
 window.updateCartCount = updateCartCount;
 updateCartCount();
+
+// searchbox suggestions
+const searchInput = document.getElementById("searchInput");
+const suggestionsBox = document.getElementById("searchSuggestions");
+
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    suggestionsBox.innerHTML = "";
+
+    if (!query || query.length < 2) {
+      suggestionsBox.style.display = "none";
+      return;
+    }
+
+    const matches = allProducts
+      .filter(p => p.name.toLowerCase().includes(query))
+      .slice(0, 6); // max 6 suggestions
+
+    if (matches.length === 0) {
+      suggestionsBox.style.display = "none";
+      return;
+    }
+
+    matches.forEach(product => {
+      const div = document.createElement("div");
+      div.className = "search-suggestion-item";
+      div.innerHTML = `
+        <img src="${product.image}" alt="${product.name}">
+        <span>${product.name}</span>
+      `;
+
+      div.addEventListener("click", () => {
+        window.location.href = `product.html?id=${product._id}`;
+      });
+
+      suggestionsBox.appendChild(div);
+    });
+
+    suggestionsBox.style.display = "block";
+  });
+
+  // Hide when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+      suggestionsBox.style.display = "none";
+    }
+  });
+}
