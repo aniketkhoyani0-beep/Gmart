@@ -51,6 +51,14 @@
       themeToggle.textContent = darkMode ? '☀️' : '🌙';
       localStorage.setItem('darkMode', darkMode);
     });
+    <script type="module">
+  import { toggleTheme } from "./theme.js";
+
+  document
+    .getElementById("themeBtn")
+    ?.addEventListener("click", toggleTheme);
+</script>
+
 
     // Auth toggle
     const authLink = document.getElementById('authLink');
