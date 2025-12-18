@@ -181,6 +181,14 @@ body {
 /* =========================================================
    PRODUCTS
 ========================================================= */
+/* ALL PRODUCTS GRID (homepage fallback) */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+
 .product-card {
   width: 200px;
   min-width: 200px;
@@ -266,4 +274,16 @@ body {
 
 @media (max-width: 600px) {
   .search-box input { display: none; }
+}
+
+@media (max-width: 900px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
