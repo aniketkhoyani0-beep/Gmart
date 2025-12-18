@@ -8,38 +8,34 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="header-left">
-      <div class="brand">
-        <a href="index.html">G<span>Mart</span></a>
-      </div>
-
-      <!-- SINGLE SEARCH BOX -->
-      <div class="search-box">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search for products..."
-          autocomplete="on"
-        />
-        <button id="searchBtn">Search</button>
-            
-
-
-        <!-- Suggestions -->
-        <div id="searchSuggestions" class="search-suggestions"></div>
-      </div>
+  <div class="header-left">
+    <div class="brand">
+      <a href="index.html">G<span>Mart</span></a>
     </div>
 
-    <div class="header-right">
-      <div id="location" class="location">Deliver to: Your Location</div>
-      <button id="themeToggle" class="ghost-btn">🌙</button>
-      <a id="authLink" href="auth.html" class="link-btn">Login</a>
-      <button id="logoutBtn" class="ghost-btn" style="display:none">Logout</button>
-      <a href="cart.html" class="cart-link">
-        Cart (<span id="cartCount">0</span>)
-      </a>
+    <div class="search-box">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search for products..."
+        autocomplete="off"
+      />
+      <button id="searchBtn">🔍</button>
+
+      <!-- Suggestions -->
+      <div id="searchSuggestions" class="search-suggestions"></div>
     </div>
-  </header>
+  </div>
+
+  <div class="header-right">
+    <button id="themeToggle" class="ghost-btn">🌙</button>
+    <a href="wishlist.html" class="ghost-btn">❤️</a>
+    <a href="cart.html" class="cart-link">
+      Cart (<span id="cartCount">0</span>)
+    </a>
+  </div>
+</header>
+
 
   <main class="container">
     <!-- Banner carousel -->
@@ -80,5 +76,6 @@
   <script src="main.js"></script>
 </body>
 </html>
+
 
 
