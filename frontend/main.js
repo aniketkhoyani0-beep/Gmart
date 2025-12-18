@@ -1,5 +1,61 @@
 const API = "https://gmart-backend-7kyz.onrender.com";
 
+// ================= USER ACCOUNT MENU =================
+
+const accountBtn = document.getElementById("accountBtn");
+const accountDropdown = document.getElementById("accountDropdown");
+const accountName = document.getElementById("accountName");
+const userNameEl = document.getElementById("userName");
+const userEmailEl = document.getElementById("userEmail");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+// Example stored user (adjust to your backend later)
+const user = JSON.parse(localStorage.getItem("user"));
+
+function updateAccountUI() {
+  if (user) {
+    accountName.textContent = user.name;
+    userNameEl.textContent = user.name;
+    userEmailEl.textContent = user.email;
+
+    document.getElementById("accountInfo").style.display = "block";
+    loginBtn.style.display = "none";
+    registerBtn.style.display = "none";
+    logoutBtn.style.display = "block";
+  } else {
+    accountName.textContent = "Account";
+    document.getElementById("accountInfo").style.display = "none";
+    loginBtn.style.display = "block";
+    registerBtn.style.display = "block";
+    logoutBtn.style.display = "none";
+  }
+}
+
+updateAccountUI();
+
+// Toggle dropdown
+accountBtn?.addEventListener("click", () => {
+  accountDropdown.style.display =
+    accountDropdown.style.display === "flex" ? "none" : "flex";
+});
+
+// Close when clicking outside
+document.addEventListener("click", e => {
+  if (!e.target.closest(".account-menu")) {
+    accountDropdown.style.display = "none";
+  }
+});
+
+// Logout
+logoutBtn?.addEventListener("click", () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("userToken");
+  location.reload();
+});
+
+
 /* ================= DOM ================= */
 const allProductsGrid = document.getElementById("allProductsGrid");
 const searchInput = document.getElementById("searchInput");
