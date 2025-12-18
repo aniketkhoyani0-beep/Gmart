@@ -510,6 +510,12 @@ body.dark-mode .search-suggestion.active {
   position: relative;
 }
 
+.page-title {
+  margin: 20px 0;
+  font-size: 1.6rem;
+}
+
+
 
 
 
