@@ -515,6 +515,42 @@ body.dark-mode .search-suggestion.active {
   font-size: 1.6rem;
 }
 
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.product-gallery img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+.product-info h1 {
+  margin-bottom: 10px;
+}
+
+.product-desc {
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.price-row.big .price {
+  font-size: 1.6rem;
+}
+
+.product-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 
 
