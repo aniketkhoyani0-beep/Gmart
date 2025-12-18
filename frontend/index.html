@@ -33,6 +33,23 @@
     <a href="cart.html" class="cart-link">
       Cart (<span id="cartCount">0</span>)
     </a>
+    <div class="account-menu">
+  <button id="accountBtn" class="account-btn">
+    👤 <span id="accountName">Account</span> ▼
+  </button>
+
+  <div id="accountDropdown" class="account-dropdown">
+    <div class="account-info" id="accountInfo" style="display:none">
+      <strong id="userName">User</strong>
+      <small id="userEmail">email@example.com</small>
+    </div>
+
+    <a href="auth.html" id="loginBtn">Login</a>
+    <a href="auth.html" id="registerBtn">Register</a>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+  </div>
+</div>
+
   </div>
 </header>
 
@@ -76,6 +93,7 @@
   <script src="main.js"></script>
 </body>
 </html>
+
 
 
 
