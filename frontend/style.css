@@ -287,3 +287,66 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ================= USER ACCOUNT MENU ================= */
+
+.account-menu {
+  position: relative;
+}
+
+.account-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.account-dropdown {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  width: 220px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  display: none;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+[data-theme="dark"] .account-dropdown a:hover,
+[data-theme="dark"] .account-dropdown button:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.account-info {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.account-info small {
+  color: var(--muted);
+}
+
+.logout-btn {
+  color: #e53935;
+}
