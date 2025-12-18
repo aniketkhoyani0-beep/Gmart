@@ -1,17 +1,13 @@
 /* =========================================================
    GMART – GLOBAL THEME VARIABLES
-   ========================================================= */
-
-/* LIGHT THEME (DEFAULT) */
+========================================================= */
 :root {
   --primary: #28a745;
-
   --bg: #f6f7f9;
   --card: #ffffff;
   --text: #222222;
   --muted: #666666;
   --border: #dddddd;
-
   --radius: 10px;
 }
 
@@ -26,36 +22,30 @@
 
 /* =========================================================
    BASE
-   ========================================================= */
-* {
-  box-sizing: border-box;
-}
+========================================================= */
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: Inter, system-ui, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
-  transition: background 0.35s ease, color 0.35s ease;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  transition: background .35s ease, color .35s ease;
 }
 
 /* =========================================================
    HEADER
-   ========================================================= */
+========================================================= */
 .site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
   padding: 12px 18px;
   background: var(--card);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 40;
-  transition: background 0.35s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
 }
 
 .header-left {
@@ -65,48 +55,101 @@ body {
 }
 
 .brand a {
+  font-size: 20px;
   font-weight: 700;
   text-decoration: none;
   color: var(--text);
-  font-size: 20px;
 }
 
-.brand span {
-  color: var(--primary);
-}
+.brand span { color: var(--primary); }
 
+/* =========================================================
+   SEARCH
+========================================================= */
 .search-box {
-   position: relative;
-   display: inline-block;
-  align-items: center;
-  gap: 6px;
+  position: relative;
+  display: inline-block;
 }
 
 .search-box input {
-  padding: 8px 45px 8px 10px;
+  width: 300px;
+  padding: 8px 44px 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  width: 300px;
   background: var(--card);
   color: var(--text);
 }
 
-
 .search-box button {
   position: absolute;
-   right: 5px;
-   top: 50%;
-   transform: translatey(-50%);
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 0;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   background: var(--primary);
   color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
 }
-/* optional hover effect*/
-.search-box button:hover { opacity: 0.9; }
 
-/* HEADER RIGHT */
+/* =========================================================
+   SEARCH SUGGESTIONS
+========================================================= */
+.search-suggestions {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  max-height: 280px;
+  overflow-y: auto;
+  display: none;
+  z-index: 999;
+  animation: fadeSlide .18s ease;
+}
+
+.search-suggestions.active { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-suggestion {
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-suggestion:hover,
+.search-suggestion.active {
+  background: rgba(0,0,0,.06);
+}
+
+[data-theme="dark"] .search-suggestion:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.search-suggestion span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.search-no-results {
+  padding: 14px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* =========================================================
+   HEADER RIGHT
+========================================================= */
 .header-right {
   display: flex;
   align-items: center;
@@ -114,166 +157,46 @@ body {
 }
 
 .location {
-  font-size: 13px;
-  color: var(--muted);
   padding: 6px 8px;
+  font-size: 13px;
   border-radius: 8px;
-  background: var(--card);
   border: 1px solid var(--border);
 }
 
 /* =========================================================
    BUTTONS
-   ========================================================= */
+========================================================= */
 .link-btn,
-.ghost-btn {
- padding: 8px 10px;
-  background: var(--primary);
-  color: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.link-btn:hover,
-.ghost-btn:hover {
-  transform: translateY(-1px);
-}
-
+.ghost-btn,
 .cart-link {
   padding: 8px 10px;
   background: var(--primary);
   color: #fff;
   border-radius: 8px;
   text-decoration: none;
-}
-
-/* =========================================================
-   THEME TOGGLE (ANIMATED)
-   ========================================================= */
-.theme-toggle {
-  font-size: 18px;
-  padding: 8px 10px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--card);
+  border: none;
   cursor: pointer;
-  transition: transform 0.35s ease, background 0.35s ease;
-}
-
-.theme-toggle:hover {
-  transform: rotate(25deg) scale(1.15);
-}
-
-/* =========================================================
-   CONTAINER
-   ========================================================= */
-.container {
-  width: 94%;
-  max-width: 1200px;
-  margin: 18px auto;
-}
-
-/* =========================================================
-   BANNER / CAROUSEL
-   ========================================================= */
-.banner-section {
-  margin-bottom: 16px;
-  position: relative;
-}
-
-.carousel {
-  height: 180px;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-
-.carousel .slide {
-  min-width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.4s ease;
-}
-
-.carousel .slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.carousel-dots {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-/* =========================================================
-   CATEGORIES
-   ========================================================= */
-.categories {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 12px 0;
-  margin-bottom: 16px;
-}
-
-.cat-card {
-  min-width: 86px;
-  background: var(--card);
-  border-radius: 10px;
-  padding: 10px 8px;
-  text-align: center;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.cat-card:hover {
-  transform: translateY(-2px);
-}
-
-.cat-card img {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  margin-bottom: 6px;
-}
-
-.cat-card p {
-  margin: 0;
-  font-size: 12px;
-  color: var(--muted);
 }
 
 /* =========================================================
    PRODUCTS
-   ========================================================= */
-.products-grid-horizontal {
-  display: flex;
-  gap: 12px;
-}
-
+========================================================= */
 .product-card {
   width: 200px;
   min-width: 200px;
   background: var(--card);
   border-radius: 10px;
   padding: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
   display: flex;
   flex-direction: column;
   gap: 8px;
   cursor: pointer;
-  transition: transform 0.25s ease;
+  transition: transform .25s ease;
+  position: relative;
 }
 
-.product-card:hover {
-  transform: translateY(-3px);
-}
+.product-card:hover { transform: translateY(-3px); }
 
 .product-card img {
   width: 100%;
@@ -284,23 +207,13 @@ body {
   padding: 6px;
 }
 
-.product-card h4 {
-  font-size: 14px;
-  margin: 0;
-  height: 36px;
-  overflow: hidden;
-}
-
 .price-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.price {
-  font-weight: 700;
-}
-
+.price { font-weight: 700; }
 .price-old {
   font-size: 12px;
   color: var(--muted);
@@ -316,179 +229,9 @@ body {
   cursor: pointer;
 }
 
-.badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #ff9800;
-  color: #fff;
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 6px;
-  font-weight: bold;
-}
-.product-card {
-  position: relative;
-}
-
 /* =========================================================
-   FOOTER
-   ========================================================= */
-.site-footer {
-  padding: 18px;
-  background: var(--card);
-  margin-top: 20px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
-  transition: background 0.35s ease;
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-@media (max-width: 900px) {
-  .search-box input {
-    width: 160px;
-  }
-
-  .product-card {
-    width: 160px;
-    min-width: 160px;
-  }
-
-  .carousel {
-    height: 160px;
-  }
-}
-
-@media (max-width: 600px) {
-  .search-box input {
-    display: none;
-  }
-
-  .carousel {
-    height: 140px;
-  }
-
-  .product-card {
-    width: 150px;
-    min-width: 150px;
-  }
-
-  .product-card img {
-    height: 96px;
-  }
-}
-
-/* =========================
-   SEARCH SUGGESTIONS
-   ========================= */
-.search-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin-top: 6px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  max-height: 280px;
-  overflow-y: auto;
-  display: none;
-  z-index: 100;
-}
-
-.search-suggestion-item {
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.search-suggestion-item:hover {
-  background: rgba(0,0,0,0.05);
-}
-
-[data-theme="dark"] .search-suggestion-item:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-.search-suggestion-item img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-  background: #fff;
-  border-radius: 6px;
-  padding: 4px;
-}
-
-.search-suggestion-item span {
-  font-size: 14px;
-}
-
-/* ================= SEARCH SUGGESTIONS ================= */
-
-.search-box {
-  position: relative;
-}
-
-.search-suggestions {
-  position: absolute;
-  top: 44px;
-  left: 0;
-  width: 100%;
-  background: var(--card);
-  border: 1px solid var(--border, #ddd);
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  max-height: 280px;
-  overflow-y: auto;
-  display: none;
-  animation: fadeSlide 0.18s ease;
-  z-index: 999;
-}
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.search-suggestions.active {
-  display: block;
-}
-
-.search-suggestion {
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.search-suggestion:hover,
-.search-suggestion.active {
-  background: rgba(0,0,0,0.05);
-}
-
-body.dark-mode .search-suggestion:hover,
-body.dark-mode .search-suggestion.active {
-  background: rgba(255,255,255,0.08);
-}
-
-.search-suggestion span {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.search-no-results {
-  padding: 14px;
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-/* Wishlist */
+   WISHLIST
+========================================================= */
 .wishlist-btn {
   position: absolute;
   top: 8px;
@@ -502,57 +245,25 @@ body.dark-mode .search-suggestion.active {
   color: #999;
 }
 
-.wishlist-btn.active {
-  color: red;
-}
+.wishlist-btn.active { color: red; }
 
-.product-card {
-  position: relative;
-}
-
-.page-title {
-  margin: 20px 0;
-  font-size: 1.6rem;
-}
-
-.product-detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-.product-gallery img {
-  width: 100%;
-  border-radius: 12px;
-}
-
-.product-info h1 {
-  margin-bottom: 10px;
-}
-
-.product-desc {
-  opacity: 0.8;
-  margin-bottom: 20px;
-}
-
-.price-row.big .price {
-  font-size: 1.6rem;
-}
-
-.product-actions {
-  display: flex;
-  gap: 15px;
+/* =========================================================
+   FOOTER
+========================================================= */
+.site-footer {
+  padding: 18px;
+  background: var(--card);
   margin-top: 20px;
 }
 
-@media (max-width: 768px) {
-  .product-detail-grid {
-    grid-template-columns: 1fr;
-  }
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 900px) {
+  .search-box input { width: 160px; }
+  .product-card { width: 160px; min-width: 160px; }
 }
 
-
-
-
-
-
+@media (max-width: 600px) {
+  .search-box input { display: none; }
+}
