@@ -1,143 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gmart — Product Details</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gmart — Product</title>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="site-header small">
-    <div class="brand"><h1>G<span>Mart</span></h1></div>
-    <div class="header-actions">
-      <a href="index.html" class="link-btn">Home</a>
-      <a href="cart.html" class="cart-link">Cart (<span id="cartCount">0</span>)</a>
-      <button id="themeToggle" class="ghost-btn">🌙</button>
-    </div>
-  </header>
 
-  <main class="container">
-    <section id="productDetail" class="product-detail">
-      <div class="gallery">
-        <img id="mainImage" src="" alt="Product Image">
-        <div id="thumbnails" class="thumbnails"></div>
-      </div>
+<header class="site-header">
+  <div class="header-left">
+    <div class="brand"><a href="index.html">G<span>Mart</span></a></div>
+  </div>
 
-      <div class="product-info">
-        <h2 id="productName"></h2>
-        <p id="productDescription"></p>
-        <p class="price">Price: €<span id="productPrice"></span></p>
-        <button id="addToCartBtn" class="primary">Add to Cart</button>
-      </div>
-    </section>
+  <div class="header-right">
+    <button id="themeToggle" class="ghost-btn">🌙</button>
+    <a href="wishlist.html" class="link-btn">Wishlist</a>
+    <a href="cart.html" class="cart-link">
+      Cart (<span id="cartCount">0</span>)
+    </a>
+  </div>
+</header>
 
-    <section id="relatedProductsSection">
-      <h3>Related Products</h3>
-      <div id="relatedProducts" class="products-grid"></div>
-    </section>
-  </main>
+<main class="container product-page">
 
-  <footer class="site-footer">
-    <small>© Gmart</small>
-  </footer>
+  <!-- PRODUCT DETAILS -->
+  <section class="product-detail" id="productDetail">
+    <!-- injected by product.js -->
+  </section>
 
-  <script type="module">
-    const backendUrl = 'https://gmart-backend-7kyz.onrender.com';
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+  <!-- RELATED PRODUCTS -->
+  <section class="related-section">
+    <h3>Related Products</h3>
+    <div id="relatedGrid" class="products-grid"></div>
+  </section>
 
-    let productData = null;
+</main>
 
-    const mainImage = document.getElementById('mainImage');
-    const thumbnails = document.getElementById('thumbnails');
-    const productName = document.getElementById('productName');
-    const productDescription = document.getElementById('productDescription');
-    const productPrice = document.getElementById('productPrice');
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    const relatedProducts = document.getElementById('relatedProducts');
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>© Gmart</div>
+  </div>
+</footer>
 
-    // Fetch product details
-    async function fetchProduct() {
-      try {
-        const res = await fetch(`${backendUrl}/api/products/${productId}`);
-        if (!res.ok) throw new Error('Product not found');
-        productData = await res.json();
-
-        productName.textContent = productData.name;
-        productDescription.textContent = productData.description;
-        productPrice.textContent = (productData.price / 100).toFixed(2);
-
-        // Image gallery
-        const images = productData.images || [productData.image || 'assets/default.png'];
-        mainImage.src = images[0];
-        thumbnails.innerHTML = '';
-        images.forEach(src => {
-          const img = document.createElement('img');
-          img.src = src;
-          img.className = 'thumb';
-          img.addEventListener('click', () => mainImage.src = src);
-          thumbnails.appendChild(img);
-        });
-      } catch (err) {
-        console.error(err);
-        document.getElementById('productDetail').textContent = 'Product not found.';
-      }
-    }
-
-    // Add to cart
-    addToCartBtn.addEventListener('click', () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const existing = cart.find(i => i._id === productData._id);
-      if (existing) existing.qty += 1;
-      else cart.push({...productData, qty: 1});
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert('Product added to cart');
-    });
-
-    // Fetch related products (simplest: all except this one)
-    async function fetchRelatedProducts() {
-      try {
-        const res = await fetch(`${backendUrl}/api/products`);
-        const products = await res.json();
-        relatedProducts.innerHTML = '';
-
-        products
-          .filter(p => p._id !== productData._id)
-          .slice(0, 4)
-          .forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'product-card';
-            div.innerHTML = `
-              <h4>${p.name}</h4>
-              <img src="${p.image || 'assets/default.png'}" alt="${p.name}">
-              <p>€${(p.price / 100).toFixed(2)}</p>
-            `;
-            div.addEventListener('click', () => {
-              window.location.href = `product.html?id=${p._id}`;
-            });
-            relatedProducts.appendChild(div);
-          });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    fetchProduct().then(fetchRelatedProducts);
-
-    // Dark/light mode toggle
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-    });
-  </script>
-  <script type="module">
-  import { toggleTheme } from "./theme.js";
-
-  document
-    .getElementById("themeBtn")
-    ?.addEventListener("click", toggleTheme);
-</script>
-
+<script src="theme.js"></script>
+<script src="product.js"></script>
 </body>
 </html>
