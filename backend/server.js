@@ -63,6 +63,8 @@ app.options('*', cors({
   origin: ALLOWED_ORIGINS,
   credentials: true
 }));
+import authRoutes from "./routes/auth.js";
+app.use("/api/auth", authRoutes);
 
 
 
