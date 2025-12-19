@@ -49,11 +49,11 @@ document.addEventListener("click", e => {
 });
 
 // Logout
-logoutBtn?.addEventListener("click", () => {
+function logout() {
   localStorage.removeItem("user");
-  localStorage.removeItem("userToken");
+  localStorage.removeItem("token");
   location.reload();
-});
+}
 
 
 /* ================= DOM ================= */
